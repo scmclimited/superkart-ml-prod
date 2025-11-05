@@ -329,24 +329,24 @@ docker logs superkart-frontend
 
 ```
 superkart-ml-prod/
-├── backend-inference-api/     # ML inference service
-│   ├── app/                    # Application code
-│   ├── models/                 # Model files directory
+├── backend-inference-api/          # ML inference service
+│   ├── app/                        # Application code
+│   ├── models/                     # Model files directory
 │   ├── Dockerfile
 │   └── requirements.txt
-├── input-transform-service/   # Data transformation service
-│   ├── app/                    # Application code
+├── input-transform-service/        # Data transformation service
+│   ├── app/                        # Application code
 │   ├── Dockerfile
 │   └── requirements.txt
-├── frontend-streamlit/        # Streamlit web interface
-│   ├── app/                    # Application code
+├── frontend-streamlit/             # Streamlit web interface
+│   ├── app/                        # Application code
 │   ├── Dockerfile
 │   └── requirements.txt
-├── sample_data/               # Sample CSV files
+├── sample_data/                    # Sample CSV file
 │   └── batch_sample.csv
-├── docker-compose.yml          # Service orchestration
-├── Full_Code_SuperKart_Model_Omar_Morales (1).html  # Model documentation
-└── README.md                   # This file
+├── docker-compose.yml              # Service orchestration
+├── Full_Code_SuperKart_Model.html  # Model documentation
+└── README.md                       # This file
 ```
 
 ### Input Validation and Field Ranges
