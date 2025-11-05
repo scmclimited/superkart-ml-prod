@@ -24,15 +24,15 @@ If you're not a developer, you can use the hosted version of this application on
 
 #### Step 2: Single Row Prediction
 1. Enter product and store information in the form fields:
-   - **Product Type**: Select from dropdown (e.g., "Snack Foods", "Fruits and Vegetables", "Beverages")
-   - **Store Type**: Select store type (e.g., "Supermarket Type1", "Grocery Store")
+   - **Product Type**: Select from dropdown (16 options: "Meat", "Snack Foods", "Soft Drinks", "Dairy", "Household", "Fruits and Vegetables", "Frozen Foods", "Breakfast", "Baking Goods", "Health and Hygiene", "Starchy Foods", "Breads", "Canned", "Seafood", "Hard Drinks", "Others")
+   - **Store Type**: Select store type (e.g., "Supermarket Type1", "Supermarket Type2", "Supermarket Type3", "Grocery Store")
    - **Store Location City Type**: Select city tier (e.g., "Tier 1", "Tier 2", "Tier 3")
-   - **Store Size**: Select size (e.g., "Small", "Medium", "Large")
-   - **Product Sugar Content**: Select sugar level (e.g., "Regular", "Low")
-   - **Product Weight**: Enter weight in kg (0-50)
-   - **Product MRP**: Enter Maximum Retail Price (0-1000)
-   - **Product Allocated Area**: Enter display area allocation (0-1.0)
-   - **Store Establishment Year**: Enter year (1950-2025)
+   - **Store Size**: Select size (e.g., "Small", "Medium", "High")
+   - **Product Sugar Content**: Select sugar level (e.g., "No Sugar", "Low Sugar", "Regular")
+   - **Product Weight**: Enter weight in kg (4.0-22.0) - *Based on training data range*
+   - **Product MRP**: Enter Maximum Retail Price (31.0-266.0) - *Based on training data range*
+   - **Product Allocated Area**: Enter display area allocation (0.004-0.298) - *Based on training data range*
+   - **Store Establishment Year**: Enter year (1987-2009) - *Based on training data range*
 
 2. Click **"Predict Revenue"** button
 3. View the predicted revenue result
@@ -50,9 +50,17 @@ For batch predictions, create a CSV file with these exact column names:
 
 ```csv
 Product_Type,Store_Type,Store_Location_City_Type,Store_Size,Product_Sugar_Content,Product_Weight,Product_MRP,Product_Allocated_Area,Store_Establishment_Year
-Snack Foods,Supermarket Type1,Tier 1,Medium,Regular,150.0,249.0,0.4,2010
-Fruits and Vegetables,Supermarket Type2,Tier 1,Large,Regular,250.0,199.0,0.6,2008
+Snack Foods,Supermarket Type1,Tier 1,Medium,Regular,12.66,146.74,0.056,2009
+Fruits and Vegetables,Supermarket Type2,Tier 1,High,Regular,11.15,126.16,0.031,2009
 ```
+
+**Important**: All field values must match the training data ranges:
+- **Product_Weight**: 4.0 to 22.0 kg
+- **Product_MRP**: 31.0 to 266.0
+- **Product_Allocated_Area**: 0.004 to 0.298
+- **Store_Establishment_Year**: 1987 to 2009
+- **Product_Type**: Must be one of the 16 valid types (see above)
+- **Store_Size**: Must be "Small", "Medium", or "High" (not "Large")
 
 A sample file (`batch_sample.csv`) is available in the `sample_data` directory of this project for reference.
 
@@ -166,12 +174,14 @@ curl -X POST http://localhost:8000/predict \
     "Store_Location_City_Type": "Tier 1",
     "Store_Size": "Medium",
     "Product_Sugar_Content": "Regular",
-    "Product_Weight": 150.0,
-    "Product_MRP": 249.0,
-    "Product_Allocated_Area": 0.4,
-    "Store_Establishment_Year": 2010
+    "Product_Weight": 12.66,
+    "Product_MRP": 146.74,
+    "Product_Allocated_Area": 0.056,
+    "Store_Establishment_Year": 2009
   }'
 ```
+
+**Note**: Field values must be within the training data ranges. Out-of-range values will be rejected with validation errors.
 
 #### Batch Prediction Example
 
@@ -186,25 +196,27 @@ curl -X POST http://localhost:8000/predict/batch \
         "Store_Location_City_Type": "Tier 1",
         "Store_Size": "Medium",
         "Product_Sugar_Content": "Regular",
-        "Product_Weight": 150.0,
-        "Product_MRP": 249.0,
-        "Product_Allocated_Area": 0.4,
-        "Store_Establishment_Year": 2010
+        "Product_Weight": 12.66,
+        "Product_MRP": 146.74,
+        "Product_Allocated_Area": 0.056,
+        "Store_Establishment_Year": 2009
       },
       {
         "Product_Type": "Fruits and Vegetables",
         "Store_Type": "Supermarket Type2",
         "Store_Location_City_Type": "Tier 1",
-        "Store_Size": "Large",
+        "Store_Size": "High",
         "Product_Sugar_Content": "Regular",
-        "Product_Weight": 250.0,
-        "Product_MRP": 199.0,
-        "Product_Allocated_Area": 0.6,
-        "Store_Establishment_Year": 2008
+        "Product_Weight": 11.15,
+        "Product_MRP": 126.16,
+        "Product_Allocated_Area": 0.031,
+        "Store_Establishment_Year": 2009
       }
     ]
   }'
 ```
+
+**Note**: All values must be within training data ranges. Invalid values will result in validation errors.
 
 #### Using the Transform Service (with File Upload)
 
@@ -336,6 +348,39 @@ superkart-ml-prod/
 ├── Full_Code_SuperKart_Model_Omar_Morales (1).html  # Model documentation
 └── README.md                   # This file
 ```
+
+### Input Validation and Field Ranges
+
+All input fields are validated against the training data ranges to ensure predictions are reliable. The system enforces strict validation based on the EDA (Exploratory Data Analysis) from the training dataset.
+
+#### Categorical Field Values
+
+**Product Type** (16 valid options):
+- "Meat", "Snack Foods", "Soft Drinks", "Dairy", "Household", "Fruits and Vegetables", "Frozen Foods", "Breakfast", "Baking Goods", "Health and Hygiene", "Starchy Foods", "Breads", "Canned", "Seafood", "Hard Drinks", "Others"
+
+**Store Type** (4 valid options):
+- "Supermarket Type1", "Supermarket Type2", "Supermarket Type3", "Grocery Store"
+
+**Store Location City Type** (3 valid options):
+- "Tier 1", "Tier 2", "Tier 3"
+
+**Store Size** (3 valid options):
+- "Small", "Medium", "High"
+
+**Product Sugar Content** (3 valid options):
+- "No Sugar", "Low Sugar", "Regular"
+- Note: Variations like "reg", "REG", "LF", "Low Fat" are automatically normalized
+
+#### Numerical Field Ranges (Based on Training Data)
+
+| Field | Min | Max | Unit | Notes |
+|-------|-----|-----|------|-------|
+| Product_Weight | 4.0 | 22.0 | kg | Extracted from training data describe() |
+| Product_MRP | 31.0 | 266.0 | currency | Extracted from training data describe() |
+| Product_Allocated_Area | 0.004 | 0.298 | ratio | Extracted from training data describe() |
+| Store_Establishment_Year | 1987 | 2009 | year | Extracted from training data describe() |
+
+**Important**: Values outside these ranges will be rejected with validation errors. The frontend enforces these ranges automatically, and the backend validates all inputs before prediction.
 
 ### API Endpoints Reference
 

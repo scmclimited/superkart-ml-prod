@@ -74,22 +74,3 @@ class Predictor:
             logger.error(f"Prediction error: {str(e)}")
             raise
     
-    def predict_with_confidence(self, df: pd.DataFrame, confidence_level: float = 0.95) -> dict:
-        """
-        Make predictions with confidence intervals (if supported by model)
-        
-        Args:
-            df: Input DataFrame
-            confidence_level: Confidence level for intervals
-            
-        Returns:
-            Dictionary with predictions and confidence intervals
-        """
-        predictions = self.predict(df)
-        
-        # Note: Confidence intervals require model-specific implementation
-        # This is a placeholder for future enhancement
-        return {
-            "predictions": predictions.tolist(),
-            "confidence_intervals": None
-        }
