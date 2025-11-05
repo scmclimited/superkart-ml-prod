@@ -1,6 +1,6 @@
 # Multi-stage build for optimized image size
 # Stage 1: Builder stage
-FROM python:3.9-slim as builder
+FROM python:3.10-slim as builder
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -26,16 +26,12 @@ RUN pip install --upgrade pip setuptools wheel && \
     pip install -r requirements.txt
 
 # Stage 2: Runtime stage
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/opt/venv/bin:$PATH" \
-    MODEL_PATH="/app/models/superkart_model.joblib" \
-    PORT=8000 \
-    WORKERS=4 \
-    LOG_LEVEL=info
+    PATH="/opt/venv/bin:$PATH"
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -56,9 +52,11 @@ COPY --from=builder /opt/venv /opt/venv
 # Copy application code
 COPY --chown=appuser:appuser app/ ./app/
 COPY --chown=appuser:appuser models/ ./models/
+COPY --chown=appuser:appuser entrypoint.sh ./entrypoint.sh
 
 # Create necessary directories and set permissions
 RUN mkdir -p /app/logs && \
+    chmod +x /app/entrypoint.sh && \
     chown -R appuser:appuser /app && \
     chmod -R 755 /app
 
@@ -72,13 +70,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Run application with uvicorn
-# Using exec form to ensure proper signal handling
-CMD ["uvicorn", "app.main:app", \
-     "--host", "0.0.0.0", \
-     "--port", "8000", \
-     "--workers", "4", \
-     "--log-level", "info", \
-     "--access-log", \
-     "--proxy-headers", \
-     "--forwarded-allow-ips", "*"]
+# Run application using entrypoint script
+# Workers and other settings can be overridden via environment variables in docker-compose
+ENTRYPOINT ["/app/entrypoint.sh"]

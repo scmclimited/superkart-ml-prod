@@ -1,5 +1,5 @@
 # Stage 1: Builder stage for dependency installation
-FROM python:3.9-slim as builder
+FROM python:3.10-slim as builder
 
 # Set working directory
 WORKDIR /app

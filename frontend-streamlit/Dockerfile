@@ -1,5 +1,16 @@
-streamlit==1.29.0          # Web UI framework for ML applications
-requests==2.31.0           # Call transform service API
-pandas==2.1.4              # Display predictions and data tables
-plotly==5.18.0             # Interactive charts and graphs
-python-dotenv==1.0.0       # Environment variable management (optional)
+# Use a minimal base image with Python 3.9 installed
+FROM python:3.9-slim
+
+# Set the working directory inside the container to /app
+WORKDIR /app
+
+# Copy all files from the current directory on the host to the container's /app directory
+COPY . .
+
+# Install Python dependencies listed in requirements.txt
+RUN pip3 install -r requirements.txt
+
+# Define the command to run the Streamlit app on port 7860 and make it accessible externally
+CMD ["streamlit", "run", "app/main.py", "--server.port=7860", "--server.address=0.0.0.0", "--server.enableXsrfProtection=false"]
+
+# NOTE: Disable XSRF protection for easier external access in order to make batch predictions
