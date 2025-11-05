@@ -30,7 +30,8 @@ FROM python:3.10-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/opt/venv/bin:$PATH"
+    PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH="/app"
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -49,7 +50,7 @@ COPY --from=builder /opt/venv /opt/venv
 
 # Copy application code
 COPY --chown=appuser:appuser app/ ./app/
-COPY --chown=appuser:appuser tests/ ./tests/
+# Note: tests/ directory is not copied to keep production image lean
 
 # Create necessary directories and set permissions
 RUN mkdir -p /app/logs && \

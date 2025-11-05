@@ -17,6 +17,13 @@ class Settings(BaseSettings):
     # Can be overridden via MODEL_PATH environment variable (docker-compose.yml sets this)
     MODEL_PATH: str = "/app/models/superkart_model.joblib"
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Ensure MODEL_PATH is read from environment if set
+        import os
+        if os.getenv("MODEL_PATH"):
+            self.MODEL_PATH = os.getenv("MODEL_PATH")
+    
     # API settings
     INFERENCE_API_HOST: str = "0.0.0.0"
     INFERENCE_API_PORT: int = 8000

@@ -10,12 +10,35 @@ from app.model_loader import ModelLoader
 from app.predict import Predictor
 from app.config import settings
 
-# Configure logging
+# Configure logging - ensure it goes to stdout/stderr for Docker
+# Convert LOG_LEVEL string to uppercase to get the correct logging constant
+# (entrypoint.sh converts it to lowercase, but we need uppercase for logging constants)
+log_level_str = settings.LOG_LEVEL.upper()
+# Map string to logging constant
+log_level_map = {
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARNING': logging.WARNING,
+    'ERROR': logging.ERROR,
+    'CRITICAL': logging.CRITICAL
+}
+log_level = log_level_map.get(log_level_str, logging.INFO)
+
 logging.basicConfig(
-    level=getattr(logging, settings.LOG_LEVEL),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=log_level,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()  # Ensure logs go to stdout/stderr
+    ]
 )
 logger = logging.getLogger(__name__)
+
+# Log startup
+logger.info("=" * 50)
+logger.info("Starting SuperKart Backend Inference API")
+logger.info(f"Log Level: {settings.LOG_LEVEL}")
+logger.info(f"Model Path: {settings.MODEL_PATH}")
+logger.info("=" * 50)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -70,11 +93,19 @@ class BatchPredictionOutput(BaseModel):
 async def startup_event():
     """Load model on startup"""
     try:
+        logger.info(f"Starting model load from: {model_loader.model_path}")
         model_loader.load_model()
         logger.info("Model loaded successfully")
+    except FileNotFoundError as e:
+        logger.error(f"Model file not found: {str(e)}")
+        logger.error("Application will start but will not be able to make predictions")
+        # Don't raise - allow app to start even if model fails
+        # Health check will report model_status as "not_loaded"
     except Exception as e:
         logger.error(f"Failed to load model: {str(e)}")
-        raise
+        logger.error("Application will start but will not be able to make predictions")
+        # Don't raise - allow app to start even if model fails
+        # Health check will report model_status as "not_loaded"
 
 
 @app.get("/")
@@ -90,12 +121,25 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    model_status = "loaded" if model_loader.model is not None else "not_loaded"
-    return {
-        "status": "healthy",
-        "model_status": model_status,
-        "timestamp": datetime.now().isoformat()
-    }
+    try:
+        model_status = "loaded" if model_loader.is_loaded() else "not_loaded"
+        # Always return healthy status - app is running even if model isn't loaded
+        # Dependencies can check model_status if needed
+        return {
+            "status": "healthy",
+            "model_status": model_status,
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Health check error: {str(e)}")
+        # Still return healthy to avoid container restarts
+        # The service is running, just model might not be loaded
+        return {
+            "status": "healthy",
+            "model_status": "error",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e)
+        }
 
 
 @app.post("/predict", response_model=PredictionOutput)

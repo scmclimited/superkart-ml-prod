@@ -15,6 +15,7 @@ services:
       - FLASK_ENV=production
       - MODEL_PATH=/app/models/superkart_model.joblib
       - LOG_LEVEL=INFO
+      - PORT=8000
       - WORKERS=4
       - TIMEOUT=120
     networks:

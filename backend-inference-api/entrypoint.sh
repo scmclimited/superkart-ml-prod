@@ -12,7 +12,20 @@ PORT=${PORT:-8000}
 WORKERS=${WORKERS:-4}
 LOG_LEVEL=${LOG_LEVEL:-info}
 
+# Validate port is numeric
+if ! echo "$PORT" | grep -qE '^[0-9]+$'; then
+    echo "ERROR: PORT must be numeric, got: $PORT"
+    exit 1
+fi
+
+# Validate workers is numeric
+if ! echo "$WORKERS" | grep -qE '^[0-9]+$'; then
+    echo "ERROR: WORKERS must be numeric, got: $WORKERS"
+    exit 1
+fi
+
 # Start uvicorn with environment variables
+# Using exec to ensure proper signal handling
 exec uvicorn app.main:app \
     --host 0.0.0.0 \
     --port "$PORT" \

@@ -8,7 +8,17 @@ class Settings(BaseSettings):
     """
     
     # Transform Service Configuration
-    TRANSFORM_SERVICE_URL: str = "http://input-transform-service:8001"
+    # Can be overridden via TRANSFORM_API_URL environment variable from docker-compose
+    # Note: Pydantic BaseSettings will automatically read TRANSFORM_API_URL from environment
+    TRANSFORM_SERVICE_URL: str = "http://input-transform-service:8030"
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Map TRANSFORM_API_URL (from docker-compose) to TRANSFORM_SERVICE_URL
+        import os
+        transform_url = os.getenv("TRANSFORM_API_URL")
+        if transform_url:
+            self.TRANSFORM_SERVICE_URL = transform_url
     
     # UI Configuration
     APP_TITLE: str = "SuperKart Sales Forecasting"

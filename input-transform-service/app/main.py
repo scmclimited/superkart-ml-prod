@@ -14,10 +14,25 @@ from app.validators import InputValidator
 from app.config import settings
 import requests
 
-# Configure logging
+# Configure logging - ensure it goes to stdout/stderr for Docker
+# Convert LOG_LEVEL string to uppercase to get the correct logging constant
+log_level_str = settings.LOG_LEVEL.upper()
+# Map string to logging constant
+log_level_map = {
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARNING': logging.WARNING,
+    'ERROR': logging.ERROR,
+    'CRITICAL': logging.CRITICAL
+}
+log_level = log_level_map.get(log_level_str, logging.INFO)
+
 logging.basicConfig(
-    level=getattr(logging, settings.LOG_LEVEL),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=log_level,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()  # Ensure logs go to stdout/stderr
+    ]
 )
 logger = logging.getLogger(__name__)
 

@@ -19,10 +19,11 @@ st.write("This tool predicts **product-level revenue** in a specific store using
 # UI for Input Features
 st.subheader("Enter Product & Store Details:")
 
-# Categorical Inputs
+# Categorical Inputs - All valid product types from training data
 product_type = st.selectbox("Product Type", [
     "Meat", "Snack Foods", "Soft Drinks", "Dairy", "Household", "Fruits and Vegetables",
-    "Frozen Foods", "Breakfast", "Baking Goods", "Health and Hygiene", "Starchy Foods"
+    "Frozen Foods", "Breakfast", "Baking Goods", "Health and Hygiene", "Starchy Foods",
+    "Breads", "Canned", "Seafood", "Hard Drinks", "Others"
 ])
 
 store_type = st.selectbox("Store Type", [
@@ -33,11 +34,17 @@ city_type = st.selectbox("City Type", ["Tier 1", "Tier 2", "Tier 3"])
 store_size = st.selectbox("Store Size", ["Small", "Medium", "High"])
 sugar_content = st.selectbox("Product Sugar Content", ["No Sugar", "Low Sugar", "Regular"])
 
-# Numerical Inputs
-product_weight = st.number_input("Product Weight (kg)", min_value=0.0, max_value=50.0, value=10.0, step=0.1)
-product_mrp = st.number_input("Product MRP", min_value=0.0, max_value=1000.0, value=200.0, step=1.0)
-allocated_area = st.number_input("Allocated Display Area (0-1)", min_value=0.0, max_value=1.0, value=0.2, step=0.01)
-store_est_year = st.number_input("Store Establishment Year", min_value=1950, max_value=2025, value=2010)
+# Numerical Inputs - Based on training data ranges from EDA
+# Product_Weight: min=4.0, max=22.0 (from training data describe())
+product_weight = st.number_input("Product Weight (kg)", min_value=4.0, max_value=22.0, value=12.66, step=0.1)
+# Product_MRP: min=31.0, max=266.0 (from training data describe())
+product_mrp = st.number_input("Product MRP", min_value=31.0, max_value=266.0, value=146.74, step=1.0)
+# Product_Allocated_Area: min=0.004, max=0.298 (from training data describe())
+# Use step=0.01 for better increment/decrement button functionality (Streamlit works better with larger steps)
+allocated_area = st.number_input("Allocated Display Area (0-1)", min_value=0.004, max_value=0.298, value=0.056, step=0.01, format="%.3f")
+# Store_Establishment_Year: min=1987, max=2009 (from training data describe())
+# Explicitly set step=1 for integer fields to ensure increment/decrement buttons work
+store_est_year = st.number_input("Store Establishment Year", min_value=1987, max_value=2009, value=2009, step=1)
 
 # Convert to DataFrame
 input_data = pd.DataFrame({

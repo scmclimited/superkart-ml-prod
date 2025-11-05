@@ -30,12 +30,13 @@ class InputValidator:
         
         self.valid_sugar_content = ["No Sugar", "Low Sugar", "Regular"]
         
-        # Define numerical ranges
+        # Define numerical ranges based on training data EDA (describe() output)
+        # Values extracted from Full_Code_SuperKart_Model.html EDA section
         self.numerical_ranges = {
-            "Product_Weight": (0.0, 50.0),
-            "Product_MRP": (0.0, 1000.0),
-            "Product_Allocated_Area": (0.0, 1.0),
-            "Store_Establishment_Year": (1950, 2025)
+            "Product_Weight": (4.0, 22.0),      # min=4.0, max=22.0
+            "Product_MRP": (31.0, 266.0),       # min=31.0, max=266.0
+            "Product_Allocated_Area": (0.004, 0.298),  # min=0.004, max=0.298
+            "Store_Establishment_Year": (1987, 2009)  # min=1987, max=2009
         }
         
         self.required_fields = [

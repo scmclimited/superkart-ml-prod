@@ -13,8 +13,15 @@ class Settings(BaseSettings):
     TRANSFORM_SERVICE_PORT: int = 8001
     
     # Inference API Configuration
+    # Can be overridden via BACKEND_API_URL environment variable from docker-compose
     INFERENCE_API_URL: str = "http://backend-inference-api:8000"
     INFERENCE_API_TIMEOUT: int = 60
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Check if BACKEND_API_URL is set (from docker-compose) and use it
+        if os.getenv("BACKEND_API_URL"):
+            self.INFERENCE_API_URL = os.getenv("BACKEND_API_URL")
     
     # File Upload Configuration
     MAX_FILE_SIZE_MB: int = 50
