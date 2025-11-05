@@ -75,7 +75,6 @@ class PredictionInput(BaseModel):
 
 class PredictionOutput(BaseModel):
     predicted_revenue: float
-    confidence_interval: Optional[dict] = None
     timestamp: str
 
 
