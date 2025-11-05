@@ -1,0 +1,11 @@
+Product_Type,Store_Type,Store_Location_City_Type,Store_Size,Product_Sugar_Content,Product_Weight,Product_MRP,Product_Allocated_Area,Store_Establishment_Year
+Snack Foods,Supermarket Type1,Tier 1,Medium,Regular,12.66,146.74,0.056,2009
+Snack Foods,Supermarket Type1,Tier 2,Small,Regular,14.18,167.58,0.096,1998
+Fruits and Vegetables,Supermarket Type2,Tier 1,High,Regular,11.15,126.16,0.031,2009
+Fruits and Vegetables,Supermarket Type3,Tier 3,Medium,Low Sugar,15.50,180.00,0.150,2009
+Snack Foods,Grocery Store,Tier 2,Small,Regular,12.03,113.64,0.053,1998
+Soft Drinks,Supermarket Type1,Tier 1,High,Regular,16.35,185.71,0.112,1999
+Soft Drinks,Supermarket Type2,Tier 2,Medium,Low Sugar,13.92,116.89,0.099,2009
+Frozen Foods,Supermarket Type1,Tier 1,Medium,Regular,12.45,143.25,0.045,2009
+Frozen Foods,Supermarket Type3,Tier 3,Small,Regular,10.64,165.99,0.020,2009
+Snack Foods,Grocery Store,Tier 2,Medium,Regular,12.94,194.75,0.286,1998
