@@ -19,7 +19,7 @@ This project consists of three microservices:
 If you're not a developer, you can use the hosted version of this application on Hugging Face Spaces without any setup.
 
 #### Step 1: Access the Application
-- Navigate to the Hugging Face Space URL (provided by your administrator)
+- Navigate to the Hugging Face Space URL (https://huggingface.co/spaces/omoral02/RevenuePredictionFrontend)
 - The web interface will open in your browser
 
 #### Step 2: Single Row Prediction
@@ -63,7 +63,7 @@ A sample file (`batch_sample.csv`) is available in the `sample_data` directory o
 
 #### Viewing the Model Documentation
 
-- Open the HTML file `Full_Code_SuperKart_Model_Omar_Morales (1).html` in the project root directory
+- Open the HTML file `Full_Code_SuperKart_Model.html` in the project root directory
 - This contains the complete Jupyter notebook analysis and model documentation
 - Open it in any web browser to view the model development process
 
@@ -368,7 +368,7 @@ Key environment variables can be set in `docker-compose.yml`:
 - Backend API is configured with 4 workers for concurrent requests
 - Transform service uses 2 workers
 - Resource limits are set in docker-compose.yml
-- For production, adjust resources based on your infrastructure
+- For production, adjust resources based on infrastructure
 
 ---
 
